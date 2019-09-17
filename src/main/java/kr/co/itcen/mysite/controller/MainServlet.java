@@ -7,13 +7,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import kr.co.itcen.web.WebUtils;
+import kr.co.itcen.mysite.action.main.MainActionFactory;
+import kr.co.itcen.web.mvc.Action;
+import kr.co.itcen.web.mvc.ActionFactory;
 
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		WebUtils.forward(request, response, "/WEB-INF/views/main/index.jsp");
+		
+		request.setCharacterEncoding("utf-8");
+		
+		String actionName = request.getParameter("a");
+		ActionFactory actionFactory = new MainActionFactory();
+		Action action = actionFactory.getAction(actionName);
+		
+		action.execute(request,response);
+//		WebUtils.forward(request, response, "/WEB-INF/views/main/index.jsp");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
