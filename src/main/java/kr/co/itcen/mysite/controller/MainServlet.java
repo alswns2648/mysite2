@@ -14,10 +14,8 @@ import kr.co.itcen.web.mvc.ActionFactory;
 public class MainServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
+	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		request.setCharacterEncoding("utf-8");
-		
 		String actionName = request.getParameter("a");
 		ActionFactory actionFactory = new MainActionFactory();
 		Action action = actionFactory.getAction(actionName);
@@ -28,6 +26,13 @@ public class MainServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		doGet(request, response);
+	}
+
+	@Override
+	public void init() throws ServletException {
+		String configPath = getServletConfig().getInitParameter("config");
+		System.out.println(configPath);
+		super.init();
 	}
 
 }
