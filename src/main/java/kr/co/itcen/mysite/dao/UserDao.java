@@ -143,9 +143,6 @@ public class UserDao {
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		
-		Statement stmt = null;
-		ResultSet rs = null;
-		
 		try {
 			connection = getConnection();
 			
@@ -156,25 +153,13 @@ public class UserDao {
 			pstmt.setString(3, vo.getPassword());
 			pstmt.setString(4, vo.getGender());
 			
-			
-			stmt = connection.createStatement();
-			rs = stmt.executeQuery("select last_insert_id()");
-			if(rs.next()) {
-				Long no = rs.getLong(1);
-				vo.setNo(no);
-			}
+			int count = pstmt.executeUpdate();
+			result = (count == 1);
 			
 		} catch (SQLException e) {
 			System.out.println("error:" + e);
 		} finally {
-			try {
-				if(rs != null) {
-					rs.close();
-				}
-				if(stmt != null) {
-					stmt.close();
-				}
-				
+			try {				
 				if(pstmt != null) {
 					pstmt.close();
 				}
@@ -289,59 +274,6 @@ public class UserDao {
 		
 		return result;		
 	}
-	
-	public List<UserVo> getList() {
-		List<UserVo> result = new ArrayList<UserVo>();
-		
-		Connection connection = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		
-		try {
-			connection = getConnection();
-			
-			String sql = 
-				"   select no, name, contents, date_format(reg_date, '%Y-%m-%d %h:%i:%s')" +
-				"     from user" + 
-				" order by reg_date desc";
-			pstmt = connection.prepareStatement(sql);
-			
-			rs = pstmt.executeQuery();
-			
-			while(rs.next()){
-				Long no = rs.getLong(1);
-				String name = rs.getString(2);
-				String email = rs.getString(3);
-				String joinDate = rs.getString(4);
-				
-				UserVo vo= new UserVo();
-				vo.setNo(no);
-				vo.setName(name);
-				vo.setEmail(email);
-				vo.setJoinDate(joinDate);
-				
-				result.add(vo);
-			}
-		} catch (SQLException e) {
-			System.out.println("error:" + e);
-		} finally {
-			try {
-				if(rs != null) {
-					rs.close();
-				}
-				if(pstmt != null) {
-					pstmt.close();
-				}
-				if(connection != null) {
-					connection.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return result;
-	}	
 	
 	private Connection getConnection() throws SQLException {
 		Connection connection = null;

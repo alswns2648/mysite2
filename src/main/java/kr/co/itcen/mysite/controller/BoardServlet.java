@@ -1,10 +1,15 @@
 package kr.co.itcen.mysite.controller;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import kr.co.itcen.mysite.action.board.BoardActionFactory;
+import kr.co.itcen.web.mvc.Action;
+import kr.co.itcen.web.mvc.ActionFactory;
 
 
 public class BoardServlet extends HttpServlet {
@@ -12,7 +17,11 @@ public class BoardServlet extends HttpServlet {
 
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String actionName = request.getParameter("a");
+		ActionFactory actionfactory = new BoardActionFactory();
+		Action action = actionfactory.getAction(actionName);
 		
+		action.execute(request,response);
 	}
 
 
