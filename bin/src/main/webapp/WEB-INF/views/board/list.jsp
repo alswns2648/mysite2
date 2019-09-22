@@ -28,23 +28,16 @@
 						<th>글쓴이</th>
 						<th>조회수</th>
 						<th>작성일</th>
-						<!-- <th>&nbsp;</th> -->
-					</tr>
-					
-					<c:set var="count" value='${fn:length(board) }' />
-					<c:forEach items='${board }' var='vo' varStatus='status'>			
+						<th>&nbsp;</th>
+					</tr>				
 					<tr>
-					
-						<td>${count - status.index }</td>
-						<td>style='padding-left:${50*vo.depth }px'>
-						<img src='${pageContext.servletContext.contextPath }/assets/images/reply.png' />
-						<a href="${pageContext.servletContext.contextPath }/board?a=view&no=${vo.no }">${vo.title } </a></td>
+						<td>1</td>
+						<td><a href="">첫 번째 글입니다.</a></td>
 						<td>${vo.user_name }</td>
 						<td>${vo.hit }</td>
 						<td>${vo.reg_date }</td>
 						<td><a href="" class="del">삭제</a></td>
 					</tr>
-					</c:forEach>
 				</table>
 				<div class="bottom">
 					<a href="${pageContext.servletContext.contextPath }/board?a=writeform" id="new-book">글쓰기</a>

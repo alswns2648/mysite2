@@ -9,10 +9,10 @@ public class BoardActionFactory extends ActionFactory {
 	public Action getAction(String actionName) {
 		Action action = null;
 
-		if("modify".equals(actionName)) {
-			action = new ModifyAction();
-		} else if("modifyform".equals(actionName)) {
-			action = new ModifyformAction(); 
+		if("view".equals(actionName)) {
+			action = new ViewAction();
+		} else if("writeform".equals(actionName)) {
+			action = new WriteAction(); 
 		} else if("writeform".equals(actionName)) {
 			action = new WriteformAction(); 
 		}else {

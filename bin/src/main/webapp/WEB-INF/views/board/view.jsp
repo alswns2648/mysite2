@@ -21,11 +21,7 @@
 					</tr>
 					<tr>
 						<td class="label">제목</td>
-						<td>${vo.reg_date }</td>
-					</tr>
-					<tr>
-						<td class="label">등록일</td>
-						<td>${vo.reg_date }</td>
+						<td>제목입니다.</td>
 					</tr>
 					<tr>
 						<td class="label">내용</td>
