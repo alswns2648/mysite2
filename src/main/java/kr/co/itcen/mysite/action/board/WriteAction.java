@@ -18,11 +18,12 @@ public class WriteAction implements Action {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		HttpSession session =request.getSession();
+		HttpSession session = request.getSession();
 		if(session ==null) {
 			WebUtils.forward(request, response, request.getContextPath());
 			return;
 		}
+		
 		UserVo authUser = (UserVo)session.getAttribute("authUser");
 		if(authUser ==null) {
 			WebUtils.forward(request, response, request.getContextPath());
@@ -30,7 +31,7 @@ public class WriteAction implements Action {
 		}
 
 		String title =request.getParameter("title");
-		String contents = request.getParameter("contents");
+		String contents = request.getParameter("content");
 
 
 		BoardVo vo = new BoardVo();
@@ -38,7 +39,7 @@ public class WriteAction implements Action {
 		vo.setContents(contents);
 		vo.setUser_no(authUser.getNo());
 
-		new BoardDao().insert(vo);
+		new BoardDao().write(vo);
 		WebUtils.redirect(request, response, request.getContextPath() + "/board");	
 
 	}

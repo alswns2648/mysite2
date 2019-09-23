@@ -40,9 +40,10 @@ public class BoardDao {
 
 			String sql = "select board.title, user.no, user.name, board.hit, date_format(board.reg_date, '%Y-%m-%d %h:%i:%s'), board.depth, board.contents, board.no "
 					+ "from board, user "
-					+ "where board.user_no=user.no and view=true "
-					+ "order by g_no desc, o_no asc Limit ?, 5";
+					+ "where board.user_no=user.no "
+					+ "order by g_no desc, o_no asc Limit 0, 5";
 			pstmt = connection.prepareStatement(sql);
+			
 			rs = pstmt.executeQuery();
 
 			while(rs.next()){
@@ -146,7 +147,7 @@ public class BoardDao {
 		return result;
 	}
 
-	public BoardVo view(long no) {
+	public BoardVo view(Long no) {
 		
 		BoardVo result = new BoardVo();
 		Connection connection = null;
@@ -199,37 +200,26 @@ public class BoardDao {
 		return result;
 	}
 	
-	public Boolean insert(BoardVo vo) {
+	public Boolean write(BoardVo vo) {
 		Boolean result = false;
 		Connection connection = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Statement stmt = null;
 		
 		try {
 			connection = getConnection();
 			
-			String sql = "select ifnull(max(g_no)+1,1) from board"; // 처음값일경우 1삽입
+			String sql = "insert into board values(null, ?, ?, 0, now(), "
+					+ "ifnull((select max(g_no)from board as b) +1,1), 1, 0, ?)"; // 처음값일경우 1삽입
 			pstmt = connection.prepareStatement(sql);
-			
-			rs=pstmt.executeQuery();
-			
-			int group_no = 0 ; 
-			
-			while(rs.next()) {
-				int gr_no = rs.getInt(1);
-				group_no = gr_no;
-			}
-						
-			String sql1 = "insert into board values(null, ?, ?, 0, now(), ?, 1, 0, ?)";
-			pstmt = connection.prepareStatement(sql1);
 			pstmt.setString(1,vo.getTitle());
 			pstmt.setString(2,vo.getContents());
-			pstmt.setInt(3,group_no);
-			pstmt.setLong(4, vo.getUser_no());
+			pstmt.setLong(3, vo.getUser_no());
+			
 			int count = pstmt.executeUpdate();
 			result = (count == 1);
 			
-
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -243,6 +233,10 @@ public class BoardDao {
 					pstmt.close();
 				}
 				
+				if(stmt != null) {
+					stmt.close();
+				}
+				
 				if(connection != null) {
 					connection.close();
 				}
@@ -253,4 +247,35 @@ public class BoardDao {
 		
 		return result;		
 	}
+	
+	public void delete(Long no) {
+		Connection connection = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			connection = getConnection();
+			
+			String sql =" update board set view=false where no = ?";
+			
+			pstmt = connection.prepareStatement(sql);
+			pstmt.setLong(1, no);
+			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			System.out.println("error:" + e);
+		} finally {
+			try {
+				if(pstmt != null) {
+					pstmt.close();
+				}
+				if(connection != null) {
+					connection.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}		
+	}
+
 }
