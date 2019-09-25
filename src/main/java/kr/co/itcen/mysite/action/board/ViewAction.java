@@ -18,27 +18,13 @@ public class ViewAction implements Action {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-		HttpSession session =request.getSession(); 
-
-		if(session ==null) {
-			WebUtils.forward(request, response, request.getContextPath()); 
-			return;
-		}
-
-		UserVo authUser = (UserVo)session.getAttribute("authUser"); 
-
-		if(authUser==null){
-			WebUtils.forward(request, response, request.getContextPath());
-			return; 
-		} // arrtibute 에 내용이 없는 경우 
-
-		System.out.println(authUser.getNo());
-
 		String no =request.getParameter("no");
 		BoardVo vo = new BoardDao().view(Long.parseLong(no)); // user.no 로 구분하여 출력
-
 		request.setAttribute("vo", vo);
-		WebUtils.forward(request, response,"/WEB-INF/views/board/view.jsp" ); // view.jsp로 보여줌
+		
+		new BoardDao().visit(Long.parseLong(no)); // 조회수 증가 메소드 가져오기
+		
+		WebUtils.forward(request, response,"/WEB-INF/views/board/view.jsp" ); // view.jsp로 이동
 
 	}
 

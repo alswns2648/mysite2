@@ -13,10 +13,11 @@ import kr.co.itcen.mysite.vo.UserVo;
 import kr.co.itcen.web.WebUtils;
 import kr.co.itcen.web.mvc.Action;
 
-public class WriteformAction implements Action {
+public class ModifyAction implements Action {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		HttpSession session = request.getSession();
 		if(session==null) {
 			WebUtils.redirect(request, response, request.getContextPath());
@@ -24,20 +25,23 @@ public class WriteformAction implements Action {
 		}
 		
 		UserVo authUser = (UserVo)session.getAttribute("authUser");
-		if(authUser==null) {
+		
+		String no = request.getParameter("no");
+		BoardVo vo = new BoardDao().get(Long.parseLong(no));
+		if(authUser.getNo()!=vo.getUser_no()) {
 			WebUtils.redirect(request, response, request.getContextPath());
 			return;
 		}
 		
-		if(request.getParameter("no")!=null) {
-			String no=request.getParameter("no");
-			BoardVo vo = new BoardDao().get(Long.parseLong(no));
-			request.setAttribute("vo", vo);
-			
-		}
+		String title = request.getParameter("title");
+		String contents =request.getParameter("contents");
 		
-		WebUtils.forward(request, response, "/WEB-INF/views/board/write.jsp");
-
+		vo.setNo(Long.parseLong(no));
+		vo.setTitle(title);
+		vo.setContents(contents);
+		
+		new BoardDao().modify(vo);
+		WebUtils.redirect(request, response, request.getContextPath()+"/board?a=view&no="+no);
 	}
 
 }

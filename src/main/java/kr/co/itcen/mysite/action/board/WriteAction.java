@@ -20,28 +20,41 @@ public class WriteAction implements Action {
 
 		HttpSession session = request.getSession();
 		if(session ==null) {
-			WebUtils.forward(request, response, request.getContextPath());
+			WebUtils.redirect(request, response, request.getContextPath());
 			return;
 		}
 		
 		UserVo authUser = (UserVo)session.getAttribute("authUser");
 		if(authUser ==null) {
-			WebUtils.forward(request, response, request.getContextPath());
+			WebUtils.redirect(request, response, request.getContextPath());
 			return;
 		}
-
-		String title =request.getParameter("title");
-		String contents = request.getParameter("content");
-
-
+		
 		BoardVo vo = new BoardVo();
+		
+		String title =request.getParameter("title");
+		String contents = request.getParameter("contents");
+		
 		vo.setTitle(title);
 		vo.setContents(contents);
 		vo.setUser_no(authUser.getNo());
+		
+		if(request.getParameter("no")==null) {
+			new BoardDao().insert(vo);
 
-		new BoardDao().write(vo);
-		WebUtils.redirect(request, response, request.getContextPath() + "/board");	
+			WebUtils.redirect(request, response, request.getContextPath()+"/board");
+		}else {
+			String g_no = request.getParameter("g_no");
+			String o_no =request.getParameter("o_no");
+			String depth = request.getParameter("depth");
+			
+			vo.setG_no(Integer.parseInt(g_no));
+			vo.setO_no(Integer.parseInt(o_no)+1);
+			vo.setDepth(Integer.parseInt(depth)+1);
+			new BoardDao().reply(vo);
 
+			WebUtils.redirect(request, response, request.getContextPath()+"/board");
+		}
 	}
 
 }
